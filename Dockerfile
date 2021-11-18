@@ -1,11 +1,11 @@
-FROM node:12-alpine
+FROM node:10-alpine
 ENV WORKDIR /usr/src/app/
 WORKDIR $WORKDIR
 COPY package*.json $WORKDIR
 RUN npm install --production --no-cache
 RUN npm install @contrast/agent --save
 
-FROM node:12-alpine
+FROM node:10-alpine
 ENV USER node
 ENV WORKDIR /home/$USER/app
 WORKDIR $WORKDIR

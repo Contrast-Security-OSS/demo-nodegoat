@@ -59,7 +59,41 @@ pipeline {
         }
         stage('exercise') {
             steps {
-                sleep 600
+                //Tests should take ~3 mins
+                sleep 240
+            }
+        }
+        stage('provision - dev') {
+            steps {
+                script {
+                    withCredentials([azureServicePrincipal('ContrastAzureSponsored')]) {
+                        try {
+                            sh """
+                            export ARM_CLIENT_ID=$AZURE_CLIENT_ID
+                            export ARM_CLIENT_SECRET=$AZURE_CLIENT_SECRET
+                            export ARM_SUBSCRIPTION_ID=$AZURE_SUBSCRIPTION_ID
+                            export ARM_TENANT_ID=$AZURE_TENANT_ID
+                            terraform apply -auto-approve -var 'location=$location' -var 'initials=$initials' -var 'environment=development' -var 'servername=Macbook-Pro' -var 'commands=["npm","run","test-with-contrast"]'
+                            """
+                        } catch (Exception e) {
+                            echo "Terraform refresh failed, deleting state"
+                            sh "rm -rf terraform.tfstate"
+                            currentBuild.result = "FAILURE"
+                            error("Aborting the build.")
+                        }
+                    }
+                }
+            }
+        }
+        stage('sleeping - dev') {
+            steps {
+                sleep 120
+            }
+        }
+        stage('exercise - dev') {
+            steps {
+                //Tests should take ~3 mins
+                sleep 240
             }
         }
         stage('destroy') {
