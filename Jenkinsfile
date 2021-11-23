@@ -119,6 +119,11 @@ pipeline {
                 }
             }
         }
+        stage('sleeping - prod') {
+            steps {
+                sleep 120
+            }
+        }
         stage('exercise - prod') {
             steps {
                 timeout(20) {
