@@ -53,15 +53,9 @@ pipeline {
                 }
             }
         }
-        stage('sleeping') {
+        stage('running cypress tests') {
             steps {
-                sleep 120
-            }
-        }
-        stage('exercise') {
-            steps {
-                //Tests should take ~3 mins
-                sleep 240
+                sleep 300
             }
         }
         stage('provision - dev') {
@@ -86,15 +80,9 @@ pipeline {
                 }
             }
         }
-        stage('sleeping - dev') {
+        stage('running cypress tests') {
             steps {
-                sleep 120
-            }
-        }
-        stage('exercise - dev') {
-            steps {
-                //Tests should take ~3 mins
-                sleep 240
+                sleep 300
             }
         }
         stage('provision - prod') {
@@ -117,11 +105,6 @@ pipeline {
                         }
                     }
                 }
-            }
-        }
-        stage('sleeping - prod') {
-            steps {
-                sleep 120
             }
         }
         stage('exercise - prod') {

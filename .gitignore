@@ -12,6 +12,7 @@ node_modules
 .Spotlight-V100
 .Trashes
 Icon?
+*.sh
 
 # Idea stuff
 .idea/**
