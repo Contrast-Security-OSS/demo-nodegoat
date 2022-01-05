@@ -53,7 +53,7 @@ pipeline {
                 }
             }
         }
-        stage('running cypress tests') {
+        stage('running cypress tests - qa') {
             steps {
                 sleep 300
             }
@@ -80,7 +80,7 @@ pipeline {
                 }
             }
         }
-        stage('running cypress tests') {
+        stage('running cypress tests - dev') {
             steps {
                 sleep 300
             }
