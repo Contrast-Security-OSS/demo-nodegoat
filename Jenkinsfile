@@ -109,12 +109,21 @@ pipeline {
         }
         stage('exercise - prod') {
             steps {
-                timeout(20) {
-                    sh """
-                    FQDN=\$(terraform output fqdn)
-                    BASEURL=\$FQDN node attack.js
-                    """
+                script {
+                    try {
+                        timeout(20) {
+                            sh """
+                            FQDN=\$(terraform output fqdn)
+                            BASEURL=\$FQDN node attack.js
+                            """
+                        }
+                    } catch (Exception e) {
+                        echo "Attack stage failed, possible timeout"
+                        currentBuild.result = "FAILURE"
+                        error("Aborting the build.")
+                    }
                 }
+                
             }
         }
         stage('destroy') {
