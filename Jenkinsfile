@@ -119,8 +119,6 @@ pipeline {
                         }
                     } catch (Exception e) {
                         echo "Attack stage failed, possible timeout"
-                        currentBuild.result = "FAILURE"
-                        error("Aborting the build.")
                     }
                 }
                 
