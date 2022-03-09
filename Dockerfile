@@ -2,7 +2,7 @@ FROM cypress/base:12
 ENV WORKDIR /usr/src/app/
 WORKDIR $WORKDIR
 COPY package*.json $WORKDIR
-RUN npm install --production --no-cache
+RUN npm install --no-cache
 
 FROM cypress/base:12
 RUN apt-get update && apt-get install -y netcat

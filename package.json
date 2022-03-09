@@ -26,7 +26,7 @@
     "//": "a9 insecure components"
   },
   "scripts": {
-    "contrast": "node -r @contrast/agent server.js",
+    "contrast": "NODE_ENV=test node -r @contrast/agent server.js",
     "test-with-contrast": "./node_modules/.bin/cypress install && npm run test:ci",
     "start": "node server.js",
     "dev": "PORT=5000 nodemon",
@@ -52,7 +52,6 @@
     "grunt-if": "https://github.com/binarymist/grunt-if/tarball/master",
     "grunt-jsbeautifier": "^0.2.12",
     "grunt-mocha-test": "^0.12.7",
-    "grunt-npm-install": "^0.3.0",
     "grunt-retire": "^0.3.12",
     "mocha": "^2.4.5",
     "nodemon": "^1.19.1",

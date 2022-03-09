@@ -8,3 +8,6 @@ Dockerfile
 *.tf
 *terraform*
 Jenkinsfile
+parseyaml.py
+node_modules/
+logs/
