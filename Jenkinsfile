@@ -41,7 +41,12 @@ pipeline {
                             export ARM_CLIENT_SECRET=$AZURE_CLIENT_SECRET
                             export ARM_SUBSCRIPTION_ID=$AZURE_SUBSCRIPTION_ID
                             export ARM_TENANT_ID=$AZURE_TENANT_ID
-                            terraform apply -auto-approve -var 'location=$location' -var 'initials=$initials' -var 'environment=qa' -var 'servername=jenkins' -var 'commands=["npm","run","test-with-contrast"]'
+                            terraform apply -auto-approve -var 'location=$location' \
+                                -var 'initials=$initials' \
+                                -var 'environment=qa' \
+                                -var 'servername=jenkins' \
+                                -var 'commands=["npm","run","test-with-contrast"]' \
+                                -var 'session_metadata=branchName=qa,committer=Abdul,buildNumber=${env.BUILD_NUMBER}'
                             """
                         } catch (Exception e) {
                             echo "Terraform refresh failed, deleting state"
@@ -68,7 +73,12 @@ pipeline {
                             export ARM_CLIENT_SECRET=$AZURE_CLIENT_SECRET
                             export ARM_SUBSCRIPTION_ID=$AZURE_SUBSCRIPTION_ID
                             export ARM_TENANT_ID=$AZURE_TENANT_ID
-                            terraform apply -auto-approve -var 'location=$location' -var 'initials=$initials' -var 'environment=development' -var 'servername=Macbook-Pro' -var 'commands=["npm","run","test-with-contrast"]'
+                            terraform apply -auto-approve -var 'location=$location' \
+                                -var 'initials=$initials' \
+                                -var 'environment=development' \
+                                -var 'servername=Macbook-Pro' \
+                                -var 'commands=["npm","run","test-with-contrast"]' \
+                                -var 'session_metadata=branchName=feat: add new dashboard,committer=Andros,buildNumber=${env.BUILD_NUMBER}'     
                             """
                         } catch (Exception e) {
                             echo "Terraform refresh failed, deleting state"
