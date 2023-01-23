@@ -24,3 +24,4 @@ report*.html
 test/e2e/screenshots/
 .terraform.tfstate.lock.info
 contrast-cli.yaml
+.dccache

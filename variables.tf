@@ -15,7 +15,7 @@ variable "appname" {
 
 variable "servername" {
   description = "The name of the server to display in Contrast TeamServer."
-  default = "nodegoat-docker"
+  default = ""
 }
 
 variable "environment" {
