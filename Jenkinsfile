@@ -113,7 +113,7 @@ pipeline {
                         timeout(20) {
                             sh """
                             FQDN=\$(terraform output --raw fqdn)
-                            BASEURL=\$FQDN node attack.js
+                            BASEURL=\$FQDN npx playwright test e2e/protect/*.ts
                             """
                         }
                     } catch (Exception e) {

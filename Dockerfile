@@ -1,10 +1,10 @@
-FROM cypress/base:14
+FROM cypress/base:14.21.1
 ENV WORKDIR /usr/src/app/
 WORKDIR $WORKDIR
 COPY package*.json $WORKDIR
 RUN npm install --no-cache
 
-FROM cypress/base:14
+FROM cypress/base:14.21.1
 RUN apt-get update && apt-get install -y netcat
 ENV USER node
 ENV WORKDIR /home/$USER/app
