@@ -1,34 +1,23 @@
-env.terraform_version = '0.12.3'
-
 pipeline {
     agent any
+    tools {
+        terraform 'terraform'
+    }
 
     stages {
         stage('dependencies') {
             steps {
-                sh """
-                FILE=/usr/bin/terraform
-                if [ -f "\$FILE" ]; then
-                    echo "\$FILE exists, skipping download"
-                else
-                    echo "\$FILE does not exist"
-                    cd /tmp
-                    curl -o terraform.zip https://releases.hashicorp.com/terraform/'$terraform_version'/terraform_'$terraform_version'_linux_amd64.zip
-                    unzip -o terraform.zip
-                    sudo mv terraform /usr/bin
-                    rm -rf terraform.zip
-                fi
-                """
                 script {
                     withCredentials([file(credentialsId: env.contrast_yaml, variable: 'path')]) {
                         def contents = readFile(env.path)
                         writeFile file: 'contrast_security.yaml', text: "$contents"
                     }
                 }
-                sh """
-                terraform init
-                npm i puppeteer
-                """
+                sh '''
+                terraform init -upgrade
+                npm i @playwright/test --no-bin-links
+                npx playwright install --with-deps chromium
+                '''
             }
         }
         stage('provision') {
@@ -123,8 +112,8 @@ pipeline {
                     try {
                         timeout(20) {
                             sh """
-                            FQDN=\$(terraform output fqdn)
-                            BASEURL=\$FQDN node attack.js
+                            FQDN=\$(terraform output --raw fqdn)
+                            BASEURL=\$FQDN npx playwright test e2e/protect/*.ts
                             """
                         }
                     } catch (Exception e) {

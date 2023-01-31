@@ -23,5 +23,6 @@ report*.html
 # e2e
 test/e2e/screenshots/
 .terraform.tfstate.lock.info
-contrast-cli.yaml
 .dccache
+/tmp
+/playwright-report
