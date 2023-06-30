@@ -2,11 +2,6 @@
 
 "use strict";
 
-// This script initializes the database. You can set the environment variable
-// before running it (default: development). ie:
-// NODE_ENV=production node artifacts/db-reset.js
-
-const _ = require("underscore");
 const { MongoClient } = require("mongodb");
 const { db } = require("../config/config");
 
@@ -37,8 +32,6 @@ const USERS_TO_INSERT = [
         //"password" : "$2a$10$Tlx2cNv15M0Aia7wyItjsepeA8Y6PyBYaNdQqvpxkIUlcONf1ZHyq", // User2_123
     }];
 
-// Getting the global config taking in account he environment (proc)
-
 const parseResponse = (err, res, comm) => {
     if (err) {
         console.log("ERROR:");
@@ -48,70 +41,84 @@ const parseResponse = (err, res, comm) => {
     }
     console.log(comm);
     console.log(JSON.stringify(res));
-}
+};
 
+async function main() {
+    const client = new MongoClient(db);
 
-// Starting here
-MongoClient.connect(db, (err, db) =>  {
-    if (err) {
-        console.log("ERROR: connect");
-        console.log(JSON.stringify(err));
-        process.exit(1);
-    }
-    console.log("Connected to the database: " + db);
+    try {
+        await client.connect();
+        console.log(`Connected to the database: ${db}`);
 
-    // remove existing data (if any), we don't want to look for errors here
-    db.dropCollection("users");
-    db.dropCollection("allocations");
-    db.dropCollection("contributions");
-    db.dropCollection("memos");
-    db.dropCollection("counters");
+        const database = client.db();
 
-    const usersCol = db.collection("users");
-    const allocationsCol = db.collection("allocations");
-    const countersCol = db.collection("counters");
-
-    // reset unique id counter
-    countersCol.insert({
-        _id: "userId",
-        seq: 3
-    });
-
-    // insert admin and test users
-    console.log("Users to insert:");
-    USERS_TO_INSERT.forEach((user) => console.log(JSON.stringify(user)));
-
-    usersCol.insertMany(USERS_TO_INSERT, (err, data) => {
-        const finalAllocations = [];
-
-        // We can't continue if error here
-        if (err) {
-            console.log("ERROR: insertMany");
-            console.log(JSON.stringify(err));
-            process.exit(1);
+        // remove existing data (if any), we don't want to look for errors here
+        const collections = ['users', 'allocations', 'contributions', 'memos', 'counters'];
+        for (const collection of collections) {
+            const coll = database.collection(collection);
+            const collExists = await coll.countDocuments({}, { limit: 1 }) !== 0;
+            if (collExists) {
+                await coll.drop();
+            }
         }
-        parseResponse(err, data, "users.insertMany");
 
-        data.ops.forEach((user) => {
+        const usersCol = database.collection("users");
+        const allocationsCol = database.collection("allocations");
+        const countersCol = database.collection("counters");
+
+        // reset unique id counter
+        await countersCol.insertOne({
+            _id: "userId",
+            seq: 4
+        });
+
+        // insert admin and test users
+        console.log("Users to insert:");
+        USERS_TO_INSERT.forEach((user) => console.log(JSON.stringify(user)));
+
+        let data;
+        try {
+            data = await usersCol.insertMany(USERS_TO_INSERT);
+            parseResponse(null, data, "users.insertMany");
+        } catch (err) {
+            console.error('An error occurred during insertMany:', err);
+        }
+
+        console.log("data.insertedIds:");
+        console.log(data.insertedIds);
+
+        console.log("Preparing allocations...");
+        const finalAllocations = [];
+        const userIds = Object.values(data.insertedIds);
+        userIds.forEach((userId) => {
+            console.log("user:");
+            console.log(userId);
             const stocks = Math.floor((Math.random() * 40) + 1);
             const funds = Math.floor((Math.random() * 40) + 1);
 
             finalAllocations.push({
-                userId: user._id,
+                userId: userId,
                 stocks: stocks,
                 funds: funds,
                 bonds: 100 - (stocks + funds)
             });
         });
 
+        console.log("Allocations prepared.");
         console.log("Allocations to insert:");
         finalAllocations.forEach(allocation => console.log(JSON.stringify(allocation)));
 
-        allocationsCol.insertMany(finalAllocations, (err, data) => {
-            parseResponse(err, data, "allocations.insertMany");
-            console.log("Database reset performed successfully")
-            process.exit(0);
-        });
+        console.log("Inserting allocations...");
+        const finalData = await allocationsCol.insertMany(finalAllocations);
 
-    });
-});
+        parseResponse(null, finalData, "allocations.insertMany");
+
+        console.log("Database reset performed successfully");
+    } catch (err) {
+        console.error(err);
+    } finally {
+        await client.close();
+    }
+}
+
+main().catch(console.error);

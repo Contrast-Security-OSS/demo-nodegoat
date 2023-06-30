@@ -30,11 +30,12 @@ pipeline {
                             export ARM_CLIENT_SECRET=$AZURE_CLIENT_SECRET
                             export ARM_SUBSCRIPTION_ID=$AZURE_SUBSCRIPTION_ID
                             export ARM_TENANT_ID=$AZURE_TENANT_ID
-                            terraform apply -auto-approve -var 'location=$location' \
+                            terraform apply -auto-approve \
+                                -var 'location=$location' \
                                 -var 'initials=$initials' \
                                 -var 'environment=qa' \
                                 -var 'servername=jenkins' \
-                                -var 'commands=["npm","run","test-with-contrast"]' \
+                                -var 'commands=["npm","run","contrast"]' \
                                 -var 'session_metadata=branchName=qa,committer=Abdul,buildNumber=${env.BUILD_NUMBER}'
                             """
                         } catch (Exception e) {
@@ -47,9 +48,25 @@ pipeline {
                 }
             }
         }
-        stage('running cypress tests - qa') {
+        stage('sleeping') {
             steps {
-                sleep 300
+                sleep 120
+            }
+        }
+        stage('exercise - qa') {
+            steps {
+                script {
+                    try {
+                        timeout(20) {
+                            sh """
+                            FQDN=\$(terraform output --raw fqdn)
+                            BASEURL=\$FQDN npx playwright@1.32.1 test e2e/assess/*.ts
+                            """
+                        }
+                    } catch (Exception e) {
+                        echo 'Exercise stage failed, possible timeout'
+                    }
+                }
             }
         }
         stage('provision - dev') {
@@ -66,7 +83,7 @@ pipeline {
                                 -var 'initials=$initials' \
                                 -var 'environment=development' \
                                 -var 'servername=Macbook-Pro' \
-                                -var 'commands=["npm","run","test-with-contrast"]' \
+                                -var 'commands=["npm","run","contrast"]' \
                                 -var 'session_metadata=branchName=feat: add new dashboard,committer=Andros,buildNumber=${env.BUILD_NUMBER}'     
                             """
                         } catch (Exception e) {
@@ -79,9 +96,25 @@ pipeline {
                 }
             }
         }
-        stage('running cypress tests - dev') {
+        stage('sleeping - dev') {
             steps {
-                sleep 300
+                sleep 120
+            }
+        }
+        stage('exercise - dev') {
+            steps {
+                script {
+                    try {
+                        timeout(20) {
+                            sh """
+                            FQDN=\$(terraform output --raw fqdn)
+                            BASEURL=\$FQDN npx playwright@1.32.1 test e2e/assess/*.ts
+                            """
+                        }
+                    } catch (Exception e) {
+                        echo 'Exercise stage failed, possible timeout'
+                    }
+                }
             }
         }
         stage('provision - prod') {
@@ -94,7 +127,12 @@ pipeline {
                             export ARM_CLIENT_SECRET=$AZURE_CLIENT_SECRET
                             export ARM_SUBSCRIPTION_ID=$AZURE_SUBSCRIPTION_ID
                             export ARM_TENANT_ID=$AZURE_TENANT_ID
-                            terraform apply -auto-approve -var 'location=$location' -var 'initials=$initials' -var 'environment=production' -var 'servername=Prod-01'
+                            terraform apply -auto-approve \
+                                -var 'location=$location' \
+                                -var 'initials=$initials' \
+                                -var 'environment=production' \
+                                -var 'servername=Prod-01'
+                                -var 'commands=["npm","run","contrast"]' \
                             """
                         } catch (Exception e) {
                             echo "Terraform refresh failed, deleting state"

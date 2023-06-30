@@ -1,12 +1,9 @@
 const bcrypt = require("bcrypt-nodejs");
 
-/* The UserDAO must be constructed with a connected database object */
 function UserDAO(db) {
 
     "use strict";
 
-    /* If this constructor is called without the "new" operator, "this" points
-     * to the global object. Log a warning and call it correctly. */
     if (false === (this instanceof UserDAO)) {
         console.log("Warning: UserDAO constructor called without 'new' operator");
         return new UserDAO(db);
@@ -16,33 +13,27 @@ function UserDAO(db) {
 
     this.addUser = (userName, firstName, lastName, password, email, callback) => {
 
-        // Create user document
         const user = {
             userName,
             firstName,
             lastName,
             benefitStartDate: this.getRandomFutureDate(),
-            password //received from request param
-            /*
-            // Fix for A2-1 - Broken Auth
-            // Stores password  in a safer way using one way encryption and salt hashing
-            password: bcrypt.hashSync(password, bcrypt.genSaltSync())
-            */
+            password
         };
 
-        // Add email if set
         if (email) {
             user.email = email;
         }
 
         this.getNextSequence("userId", (err, id) => {
             if (err) {
+                console.log(err)
                 return callback(err, null);
             }
-            console.log(typeof(id));
+            console.log(id);
 
             user._id = id;
-            usersCol.insert(user, (err, result) => !err ? callback(null, result.ops[0]) : callback(err, null));
+            usersCol.insertOne(user, (err, result) => !err ? callback(null, user) : callback(err, null));
         });
     };
 
@@ -56,17 +47,10 @@ function UserDAO(db) {
 
     this.validateLogin = (userName, password, callback) => {
 
-        // Helper function to compare passwords
         const comparePassword = (fromDB, fromUser) => {
             return fromDB === fromUser;
-            /*
-            // Fix for A2-Broken Auth
-            // compares decrypted password stored in this.addUser()
-            return bcrypt.compareSync(fromDB, fromUser);
-            */
         }
 
-        // Callback to pass to MongoDB that validates a user document
         const validateUserDoc = (err, user) => {
 
             if (err) return callback(err, null);
@@ -76,13 +60,11 @@ function UserDAO(db) {
                     callback(null, user);
                 } else {
                     const invalidPasswordError = new Error("Invalid password");
-                    // Set an extra field so we can distinguish this from a db error
                     invalidPasswordError.invalidPassword = true;
                     callback(invalidPasswordError, null);
                 }
             } else {
                 const noSuchUserError = new Error("User: " + user + " does not exist");
-                // Set an extra field so we can distinguish this from a db error
                 noSuchUserError.noSuchUser = true;
                 callback(noSuchUserError, null);
             }
@@ -93,7 +75,6 @@ function UserDAO(db) {
         }, validateUserDoc);
     };
 
-    // This is the good one, see the next function
     this.getUserById = (userId, callback) => {
         usersCol.findOne({
             _id: parseInt(userId)
@@ -107,15 +88,10 @@ function UserDAO(db) {
     };
 
     this.getNextSequence = (name, callback) => {
-        db.collection("counters").findAndModify({
-                _id: name
-            }, [], {
-                $inc: {
-                    seq: 1
-                }
-            }, {
-                new: true
-            },
+        db.collection("counters").findOneAndUpdate(
+            { _id: name },
+            { $inc: { seq: 1 } },
+            { returnOriginal: false },
             (err, data) =>  err ? callback(err, null) : callback(null, data.value.seq));
     };
 }

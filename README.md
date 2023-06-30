@@ -6,7 +6,7 @@ This sample application is based on https://github.com/OWASP/NodeGoat.git.
 
 # Running standalone
 
-You can run NodeGoat locally on any machine with Node.js v10.16.0 installed.
+You can run NodeGoat locally on any machine with Node.js LTS installed.
 
 1. Place a `contrast_security.yaml` file into the application's root folder.
 1. Run `npm install @contrast/agent`.
@@ -41,10 +41,6 @@ You can run NodeGoat within a Docker container.
 1. Run `terraform plan` and check the output for errors.
 1. Run `terraform apply` to build the infrastructure that you need in Azure, this will output the web address for the application. 
 1. Run `terraform destroy` when you would like to stop the app service and release the resources.
-
-## Tests
-
-This container includes cypress to run automated tests. These can be run using `npm run test-with-contrast`.
 
 ## Updating the Docker Image
 

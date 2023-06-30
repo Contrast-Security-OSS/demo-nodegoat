@@ -17,7 +17,7 @@ const AllocationsDAO = function(db){
 
     this.update = (userId, stocks, funds, bonds, callback) => {
         const parsedUserId = parseInt(userId);
-
+    
         // Create allocations document
         const allocations = {
             userId: userId,
@@ -25,10 +25,10 @@ const AllocationsDAO = function(db){
             funds: funds,
             bonds: bonds
         };
-
-        allocationsCol.update({
+    
+        allocationsCol.updateOne({
             userId: parsedUserId
-        }, allocations, {
+        }, { $set: allocations }, {
             upsert: true
         }, err => {
 

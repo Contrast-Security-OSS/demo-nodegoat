@@ -21,7 +21,7 @@ function BenefitsDAO(db) {
     };
 
     this.updateBenefits = (userId, startDate, callback) => {
-        usersCol.update({
+        usersCol.updateOne({
                 _id: parseInt(userId)
             }, {
                 $set: {

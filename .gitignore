@@ -26,3 +26,5 @@ test/e2e/screenshots/
 .dccache
 /tmp
 /playwright-report
+contrast_effective_config.json
+contrast_system_info.json

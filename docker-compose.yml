@@ -3,7 +3,7 @@ version: "3.7"
 services:
   web:
     build: .
-    command:  sh -c "until nc -z -w 2 mongo 27017 && echo 'mongo is ready for connections' && node artifacts/db-reset.js && npm run contrast; do sleep 2; done"
+    command:  sh -c "until nc -z -w 2 mongo 27017 && echo 'mongo is ready for connections' && npm run db:seed && npm run contrast; do sleep 2; done"
     ports:
       - "4000:4000"
     volumes:

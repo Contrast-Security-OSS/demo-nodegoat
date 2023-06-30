@@ -1,16 +1,16 @@
-FROM cypress/base:14.21.1
+FROM node:18-alpine
 ENV WORKDIR /usr/src/app/
 WORKDIR $WORKDIR
 COPY package*.json $WORKDIR
 RUN npm install --no-cache
+RUN npm i @contrast/agent
 
-FROM cypress/base:14.21.1
-RUN apt-get update && apt-get install -y netcat
+FROM node:18-alpine
+RUN apk update and apk add netcat
 ENV USER node
 ENV WORKDIR /home/$USER/app
 WORKDIR $WORKDIR
 COPY --from=0 /usr/src/app/node_modules node_modules
-RUN npm install @contrast/agent --no-save
 
 RUN chown $USER:$USER $WORKDIR
 COPY --chown=node . $WORKDIR

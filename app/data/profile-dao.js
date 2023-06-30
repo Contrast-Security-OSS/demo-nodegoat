@@ -75,7 +75,7 @@ function ProfileDAO(db) {
         }
         */
 
-        users.update({
+        users.updateOne({
                 _id: parseInt(userId)
             }, {
                 $set: user
