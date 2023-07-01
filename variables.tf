@@ -26,7 +26,7 @@ variable "environment" {
 variable "commands" {
   type        = list(string)
   description = "The commands to run when the container is started"
-  default     = ["npm","run","contrast"]
+  default     = ["sh", "-c", "until nc -z -w 2 localhost 27017 && echo 'mongo is ready for connections' && npm run db:seed && npm run contrast; do sleep 2; done"]
 }
 
 variable "application_port" {

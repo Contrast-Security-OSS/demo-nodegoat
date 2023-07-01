@@ -4,7 +4,6 @@ test.use({ storageState: './tmp/admin.json' })
 test.describe('/allocations behaviour', () => {
 
   test('Should be accesible for a logged user', async ({page}) => {
-    // Replace 'userSignIn()' with the actual function to sign in the user
     await page.goto('/allocations/1');
     expect(page.url()).toContain('allocations');
   });
