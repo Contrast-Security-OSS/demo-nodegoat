@@ -31,11 +31,11 @@ pipeline {
                             export ARM_SUBSCRIPTION_ID=$AZURE_SUBSCRIPTION_ID
                             export ARM_TENANT_ID=$AZURE_TENANT_ID
                             terraform apply -auto-approve \
-                                -var 'location=$location' \
-                                -var 'initials=$initials' \
-                                -var 'environment=qa' \
-                                -var 'servername=jenkins' \
-                                -var 'commands=["sh", "-c", "until nc -z -w 2 localhost 27017 && echo \'mongo is ready for connections\' && npm run db:seed && npm run contrast; do sleep 2; done"]' \
+                                -var "location=$location" \
+                                -var "initials=$initials" \
+                                -var "environment=qa" \
+                                -var "servername=jenkins" \
+                                -var 'commands=["sh", "-c", "until nc -z -w 2 localhost 27017 && echo \\"mongo is ready for connections\\" && npm run db:seed && npm run contrast; do sleep 2; done"]' \
                                 -var 'session_metadata=branchName=qa,committer=Abdul,buildNumber=${env.BUILD_NUMBER}'
                             """
                         } catch (Exception e) {
@@ -79,11 +79,12 @@ pipeline {
                             export ARM_CLIENT_SECRET=$AZURE_CLIENT_SECRET
                             export ARM_SUBSCRIPTION_ID=$AZURE_SUBSCRIPTION_ID
                             export ARM_TENANT_ID=$AZURE_TENANT_ID
-                            terraform apply -auto-approve -var 'location=$location' \
-                                -var 'initials=$initials' \
-                                -var 'environment=development' \
-                                -var 'servername=Macbook-Pro' \
-                                -var 'commands=["sh", "-c", "until nc -z -w 2 localhost 27017 && echo \'mongo is ready for connections\' && npm run db:seed && npm run contrast; do sleep 2; done"]' \
+                            terraform apply -auto-approve \
+                                -var "location=$location" \
+                                -var "initials=$initials" \
+                                -var "environment=development" \
+                                -var "servername=Macbook-Pro" \
+                                -var 'commands=["sh", "-c", "until nc -z -w 2 localhost 27017 && echo \\"mongo is ready for connections\\" && npm run db:seed && npm run contrast; do sleep 2; done"]' \
                                 -var 'session_metadata=branchName=feat: add new dashboard,committer=Andros,buildNumber=${env.BUILD_NUMBER}'     
                             """
                         } catch (Exception e) {
@@ -128,11 +129,11 @@ pipeline {
                             export ARM_SUBSCRIPTION_ID=$AZURE_SUBSCRIPTION_ID
                             export ARM_TENANT_ID=$AZURE_TENANT_ID
                             terraform apply -auto-approve \
-                                -var 'location=$location' \
-                                -var 'initials=$initials' \
-                                -var 'environment=production' \
-                                -var 'servername=Prod-01' \
-                                -var 'commands=["sh", "-c", "until nc -z -w 2 localhost 27017 && echo \'mongo is ready for connections\' && npm run db:seed && npm run contrast; do sleep 2; done"]'
+                                -var "location=$location" \
+                                -var "initials=$initials" \
+                                -var "environment=production" \
+                                -var "servername=Prod-01" \
+                                -var 'commands=["sh", "-c", "until nc -z -w 2 localhost 27017 && echo \\"mongo is ready for connections\\" && npm run db:seed && npm run contrast; do sleep 2; done"]' 
                             """
                         } catch (Exception e) {
                             echo "Terraform refresh failed, deleting state"
