@@ -35,7 +35,7 @@ pipeline {
                                 -var 'initials=$initials' \
                                 -var 'environment=qa' \
                                 -var 'servername=jenkins' \
-                                -var 'commands=["npm","run","contrast"]' \
+                                -var 'commands=["sh", "-c", "until nc -z -w 2 localhost 27017 && echo \'mongo is ready for connections\' && npm run db:seed && npm run contrast; do sleep 2; done"]' \
                                 -var 'session_metadata=branchName=qa,committer=Abdul,buildNumber=${env.BUILD_NUMBER}'
                             """
                         } catch (Exception e) {
@@ -83,7 +83,7 @@ pipeline {
                                 -var 'initials=$initials' \
                                 -var 'environment=development' \
                                 -var 'servername=Macbook-Pro' \
-                                -var 'commands=["npm","run","contrast"]' \
+                                -var 'commands=["sh", "-c", "until nc -z -w 2 localhost 27017 && echo \'mongo is ready for connections\' && npm run db:seed && npm run contrast; do sleep 2; done"]' \
                                 -var 'session_metadata=branchName=feat: add new dashboard,committer=Andros,buildNumber=${env.BUILD_NUMBER}'     
                             """
                         } catch (Exception e) {
@@ -131,8 +131,8 @@ pipeline {
                                 -var 'location=$location' \
                                 -var 'initials=$initials' \
                                 -var 'environment=production' \
-                                -var 'servername=Prod-01'
-                                -var 'commands=["npm","run","contrast"]' \
+                                -var 'servername=Prod-01' \
+                                -var 'commands=["sh", "-c", "until nc -z -w 2 localhost 27017 && echo \'mongo is ready for connections\' && npm run db:seed && npm run contrast; do sleep 2; done"]'
                             """
                         } catch (Exception e) {
                             echo "Terraform refresh failed, deleting state"
