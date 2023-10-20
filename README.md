@@ -9,7 +9,7 @@ This sample application is based on https://github.com/OWASP/NodeGoat.git.
 You can run NodeGoat locally on any machine with Node.js LTS installed.
 
 1. Place a `contrast_security.yaml` file into the application's root folder.
-1. Run `npm install @contrast/agent`.
+1. Run `npm install @contrast/agent` for Assess or `npm install @contrast/protect-agent` for Protect .
 1. Create Mongo DB:
         * If using local Mongo DB instance, start [mongod](http://docs.mongodb.org/manual/reference/program/mongod/#bin.mongod).
         * Update the `db` property in file `config/env/development.js` to reflect your DB setup. (in format: `mongodb://localhost:27017/<databasename>`)
@@ -23,7 +23,7 @@ You can run NodeGoat locally on any machine with Node.js LTS installed.
 You can run NodeGoat within a Docker container. 
 
 1. Place a `contrast_security.yaml` file into the application's root folder.
-1. Build the NodeGoat container image using `docker-compose build`. The Contrast agent is added automatically during the Docker build process.
+1. Build the NodeGoat container image using `docker-compose build`. The Contrast v4 (Assess) agent is added automatically during the Docker build process.
 1. Run the container using `docker-compose up`, this will start a local mongodb container and the web server together.
 1. Browse the application at http://localhost:4000/NodeGoat/
 
@@ -46,8 +46,8 @@ You can run NodeGoat within a Docker container.
 
 You can re-build the docker image by running two scripts in order:
 
-* 1-Build-Docker-Image.sh
-* 2-Deploy-Docker-Image-To-Docker-Hub.sh
+* image.sh
+* deploy.sh
 
 ## License
 Code licensed under the [Apache License v2.0.](http://www.apache.org/licenses/LICENSE-2.0)

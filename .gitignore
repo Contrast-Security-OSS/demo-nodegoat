@@ -28,3 +28,4 @@ test/e2e/screenshots/
 /playwright-report
 contrast_effective_config.json
 contrast_system_info.json
+/output

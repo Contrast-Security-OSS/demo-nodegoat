@@ -1,9 +1,16 @@
 FROM node:18-alpine
+ARG CONTRAST_INSTALL=OFF
 ENV WORKDIR /usr/src/app/
 WORKDIR $WORKDIR
 COPY package*.json $WORKDIR
 RUN npm install --no-cache
-RUN npm i @contrast/agent
+
+# Conditional installation of Contrast based on CONTRAST_INSTALL
+RUN if [ "$CONTRAST_INSTALL" = "ASSESS" ]; then \
+        npm install @contrast/agent; \
+    elif [ "$CONTRAST_INSTALL" = "PROTECT" ]; then \
+        npm install @contrast/protect-agent; \
+    fi
 
 FROM node:18-alpine
 RUN apk update and apk add netcat

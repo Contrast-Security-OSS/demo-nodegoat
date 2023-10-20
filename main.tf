@@ -27,7 +27,7 @@ resource "azurerm_container_group" "app" {
 
  container {
     name   = "web"
-    image  = "contrastsecuritydemo/nodegoat:1.3.0"
+    image  = "contrastsecuritydemo/nodegoat-assess:1.3.0"
     cpu    = "2"
     memory = "3"
     ports {

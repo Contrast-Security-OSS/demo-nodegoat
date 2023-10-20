@@ -11,3 +11,4 @@ Jenkinsfile
 parseyaml.py
 node_modules/
 logs/
+output/
