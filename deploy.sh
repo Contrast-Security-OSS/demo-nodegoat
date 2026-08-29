@@ -1,13 +1,8 @@
 #!/bin/bash
+aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 109573999282.dkr.ecr.eu-north-1.amazonaws.com
 
-echo "Please log in using your Docker Hub credentials to update the container image"
-docker login
-#Without Contrast (to show K8s operator)
-docker tag nodegoat:1.3.0 contrastsecuritydemo/nodegoat:1.3.0
-docker push contrastsecuritydemo/nodegoat:1.3.0
-#With v4
-docker tag nodegoat-assess:1.3.0 contrastsecuritydemo/nodegoat-assess:1.3.0
-docker push contrastsecuritydemo/nodegoat-assess:1.3.0
-#With v5
-docker tag nodegoat-protect:1.3.0 contrastsecuritydemo/nodegoat-protect:1.3.0
-docker push contrastsecuritydemo/nodegoat-protect:1.3.0
+docker pull 109573999282.dkr.ecr.eu-north-1.amazonaws.com/docker-project:$1
+
+docker rm -f demo-nodegoat
+
+docker run -itd -p 8000:8000 --name demo-nodegoat 109573999282.dkr.ecr.eu-north-1.amazonaws.com/docker-project:$1
